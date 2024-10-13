@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maks Map Game on Python</title>
+    <style>
+        /* CSS styles for buttons */
+        .request-now-button {
+            background-color: #4CAF50;
+            color: rgb(230, 86, 86);
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 50%;
+        }
+        .schedule-later-button {
+            background-color: #3498DB;
+            color: rgb(222, 16, 16);
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: color(green);
+            cursor: pointer;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <h2>Maks Map Game</h2>
+
+    <h1>Hello and welcome to the adventure {{ name }}! We call it name for simplicity</h1>
+    <p>This is a simple map game where you will need to find a hidden treasure in a given time limit. The map is a square, and the treasure is at one of the corners. Your task is to move the map around the treasure using the arrow keys. Good luck!</p>
+    <div id="map"></div>
+
+    <button class="request-now-button" onclick="requestNow()">Request Now</button>
+    <button class="schedule-later-button" onclick="scheduleLater()">Schedule Later</button>
+    <script src="game.js"></script>
+    <script>
+        // JavaScript code for interactive buttons and prompts
+
+        function requestNow() {
+            // Call Python function to get consent immediately
+            var consent = prompt("Do you want to start the adventure now? Y or N");
+
+            // Make an AJAX request to the Flask server to process the consent
+            fetch('/process_consent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ consent: consent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the Flask server
+                if (data.result === 'yes') {
+                    // Start the adventure
+                    startAdventure();
+                } else {
+                    // Display an error message
+                    alert("You need to give consent to start the adventure.");
+                }
+            })
+            .catch(error => {
+                // Handle any errors
+                console.error('Error:', error);
+                alert("An error occurred while processing your consent.");
+            });
+        }
+
+        function scheduleLater() {
+            // Call Python function to schedule the adventure later
+            var scheduledTime = prompt("Enter the time you want to start the adventure (in HH:MM format):");
+
+            // Make an AJAX request to the Flask server to process the scheduled time
+            fetch('/schedule_adventure', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ scheduledTime: scheduledTime })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the Flask server
+                if (data.result === 'success') {
+                    // Display a success message
+                    alert("The adventure has been scheduled for " + scheduledTime + ".");
+                } else {
+                    // Display an error message
+                    alert("Invalid time format. Please enter the time in HH:MM format.");
+                }
+            })
+            .catch(error => {
+                // Handle any errors
+                console.error('Error:', error);
+                alert("An error occurred while scheduling the adventure.");
+            });
+        }
+
+        function startAdventure() {
+            // Start the adventure
+            // You can implement the game logic here
+            console.log("Starting the adventure...");
+        }
+    </script>
+</body>
+</html>
